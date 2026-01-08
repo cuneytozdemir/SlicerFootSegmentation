@@ -5,7 +5,7 @@
 
 AI-powered automatic 3D foot segmentation extension for 3D Slicer.
 
-![Extension Preview](FootSegmentation/Resources/fig_segmentation_examples.png)
+![Extension Preview](SlicerFootSegmentation/Resources/fig_segmentation_examples.png)
 
  Description
 
@@ -33,12 +33,12 @@ This extension provides automatic segmentation of foot structures from 3D medica
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/cuneytozdemir/FootSegmentation.git
+   git clone https://github.com/cuneytozdemir/SlicerFootSegmentation.git
    ```
 
 2. In 3D Slicer, go to Edit → Application Settings → Modules
 
-3. Add the path to the `FootSegmentation` folder
+3. Add the path to the `SlicerFootSegmentation` folder
 
 4. Restart 3D Slicer
 
@@ -102,6 +102,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Author: Cüneyt ÖZDEMİR
 - Email: cuneytozdemir33@gmail.com
 - Institution: Siirt Üniversitesi
+
 
 
 
