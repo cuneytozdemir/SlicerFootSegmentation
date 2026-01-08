@@ -6,23 +6,23 @@
 #
 
 scm git
-scmurl https://github.com/YOUR_USERNAME/SlicerFootSegmentation.git
+scmurl https://github.com/cuneytozdemir/SlicerFootSegmentation.git
 scmrevision main
 
 # Extension bilgileri
 build_subdirectory .
-homepage https://github.com/YOUR_USERNAME/SlicerFootSegmentation
-contributors Your Name (Your Institution)
+homepage https://github.com/cuneytozdemir/SlicerFootSegmentation
+contributors Cüneyt ÖZDEMİR (Siirt University),Mehmet Ali GEDİK (Kutahya University of Health Sciences)
 category Segmentation
 
 # Extension açıklaması
 description AI-powered automatic 3D foot segmentation using deep learning. This extension provides automatic segmentation of foot structures from NIfTI/DICOM volumes using a pre-trained 3D U-Net model converted to ONNX format for optimal performance and portability.
 
-# Ekran görüntüsü URL'leri (virgülle ayrılmış)
-screenshoturls https://raw.githubusercontent.com/YOUR_USERNAME/SlicerFootSegmentation/main/Screenshots/screenshot1.png
+#  Screenshot URLs (comma-separated)
+screenshoturls https://raw.githubusercontent.com/cuneytozdemir/SlicerFootSegmentation/main/Screenshots/screenshot1.png
 
-# İkon URL
-iconurl https://raw.githubusercontent.com/YOUR_USERNAME/SlicerFootSegmentation/main/FootSegmentation/Resources/Icons/FootSegmentation.png
+# icon URL
+iconurl https://raw.githubusercontent.com/cuneytozdemir/SlicerFootSegmentation/main/FootSegmentation/Resources/Icons/FootSegmentation.png
 
 # Bağımlılıklar (varsa)
 depends NA
@@ -32,3 +32,4 @@ status
 
 # Etkinleştirildiği Slicer sürümü (minimum)
 slicer_revision 30893
+
