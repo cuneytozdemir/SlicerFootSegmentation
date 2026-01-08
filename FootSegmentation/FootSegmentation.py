@@ -22,6 +22,8 @@ import slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
 import vtk
+import ctk
+import qt
 
 try:
     import onnxruntime as ort
@@ -324,8 +326,10 @@ class FootSegmentationLogic(ScriptedLoadableModuleLogic):
         self.session = None
         self.modelLoaded = False
         
-        # Model configuration
-        self.patchSize = (64, 128, 128)
+        # Model configuration - must match ONNX model input shape (batch, depth, height, width, channels)
+        # Based on error analysis: index 2 expects 64, index 3 expects 128
+        # So model expects (1, 64, 64, 128, 1) -> patchSize = (depth=64, height=64, width=128)
+        self.patchSize = (64, 64, 128)
         self.inputName = None
         self.outputName = None
     
@@ -402,6 +406,12 @@ class FootSegmentationLogic(ScriptedLoadableModuleLogic):
         self.outputName = self.session.get_outputs()[0].name
         
         self.modelLoaded = True
+        
+        # Log model input shape for debugging
+        input_shape = self.session.get_inputs()[0].shape
+        logging.info(f"ONNX model input shape: {input_shape}")
+        logging.info(f"ONNX model input name: {self.inputName}")
+        logging.info(f"ONNX model output name: {self.outputName}")
         logging.info("ONNX model loaded successfully")
         
         return True
