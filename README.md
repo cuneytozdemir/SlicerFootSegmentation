@@ -5,7 +5,7 @@
 
 AI-powered automatic 3D foot segmentation extension for 3D Slicer.
 
-![Extension Preview](Screenshots/preview.png)
+![Extension Preview](FootSegmentation/Resources/fig_segmentation_examples.png)
 
  Description
 
@@ -102,4 +102,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Author: Cüneyt ÖZDEMİR
 - Email: cuneytozdemir33@gmail.com
 - Institution: Siirt Üniversitesi
+
 
