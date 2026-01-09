@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+Health# -*- coding: utf-8 -*-
 """
 FootSegmentation - 3D Slicer Extension
 AI-powered 3D foot segmentation using ONNX model.
@@ -25,12 +25,28 @@ import vtk
 import ctk
 import qt
 
-try:
-    import onnxruntime as ort
-    ONNX_AVAILABLE = True
-except ImportError:
-    ONNX_AVAILABLE = False
-    logging.warning("onnxruntime not installed. Please install: pip install onnxruntime")
+# ONNX Runtime will be installed automatically when needed
+ONNX_AVAILABLE = None  # Will be set after installation attempt
+
+def ensureOnnxruntimeInstalled():
+    """Check if onnxruntime is installed, install if not."""
+    global ONNX_AVAILABLE
+    try:
+        import onnxruntime
+        ONNX_AVAILABLE = True
+        return True
+    except ImportError:
+        logging.info("Installing onnxruntime...")
+        try:
+            slicer.util.pip_install('onnxruntime')
+            import onnxruntime
+            ONNX_AVAILABLE = True
+            logging.info("onnxruntime installed successfully")
+            return True
+        except Exception as e:
+            ONNX_AVAILABLE = False
+            logging.error(f"Failed to install onnxruntime: {e}")
+            return False
 
 
 # =============================================================================
@@ -71,6 +87,29 @@ class FootSegmentation(ScriptedLoadableModule):
         Mehmet Ali Gedik (Kütahya Health Sciences University).
         The deep learning model uses 3D U-Net architecture.
         """
+        
+        # Register sample data
+        self._registerSampleData()
+    
+    def _registerSampleData(self):
+        """Register sample data for the module."""
+        try:
+            import SampleData
+            iconsPath = os.path.join(os.path.dirname(__file__), 'Resources', 'Icons')
+            
+            # Register sample foot CT
+            SampleData.SampleDataLogic.registerCustomSampleDataSource(
+                category='FootSegmentation',
+                sampleName='FootCT',
+                uris="https://github.com/cuneytozdemir/SlicerFootSegmentation/releases/download/v1.0.0/sample_foot_ct.nrrd",
+                fileNames='sample_foot_ct.nrrd',
+                nodeNames='FootCT',
+                thumbnailFileName=os.path.join(iconsPath, 'FootSegmentation.png') if os.path.exists(os.path.join(iconsPath, 'FootSegmentation.png')) else None,
+                loadFileType='VolumeFile'
+            )
+            logging.info("FootSegmentation sample data registered successfully")
+        except Exception as e:
+            logging.debug(f"Could not register sample data: {e}")
 
 
 # =============================================================================
@@ -242,11 +281,8 @@ class FootSegmentationWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def updateButtonState(self):
         """Update segment button enabled state."""
         inputVolume = self.inputSelector.currentNode()
-        self.segmentButton.enabled = inputVolume is not None and ONNX_AVAILABLE
-        
-        if not ONNX_AVAILABLE:
-            self.statusLabel.setText("ERROR: onnxruntime not installed!")
-            self.statusLabel.setStyleSheet("color: red; font-weight: bold;")
+        self.segmentButton.enabled = inputVolume is not None
+        # ONNX runtime will be installed automatically when segmentation starts
     
     def onSegmentButton(self):
         """Run segmentation when button clicked."""
@@ -380,17 +416,26 @@ class FootSegmentationLogic(ScriptedLoadableModuleLogic):
                 f"Target location: {modelPath}"
             )
     
-    def loadModel(self, useGPU: bool = False):
+    def loadModel(self, useGPU: bool = False, progressCallback=None):
         """Load ONNX model (automatically downloads if not present)."""
         
         if self.modelLoaded:
             return True
         
+        # Ensure onnxruntime is installed
+        if progressCallback:
+            progressCallback(3, "Checking onnxruntime...")
+        
+        if not ensureOnnxruntimeInstalled():
+            raise RuntimeError("Could not install onnxruntime. Please install manually: pip install onnxruntime")
+        
+        import onnxruntime as ort
+        
         modelPath = self.getModelPath()
         
         # Download model if not present
         if not os.path.exists(modelPath):
-            self.downloadModel()
+            self.downloadModel(progressCallback)
         
         # Setup providers
         if useGPU:
@@ -518,8 +563,8 @@ class FootSegmentationLogic(ScriptedLoadableModuleLogic):
         if progressCallback:
             progressCallback(5, "Loading model...")
         
-        # Load model
-        self.loadModel(useGPU)
+        # Load model (this will also install onnxruntime if needed)
+        self.loadModel(useGPU, progressCallback)
         
         if progressCallback:
             progressCallback(10, "Reading volume...")
