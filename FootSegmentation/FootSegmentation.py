@@ -1,4 +1,4 @@
-Health# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 FootSegmentation - 3D Slicer Extension
 AI-powered 3D foot segmentation using ONNX model.
